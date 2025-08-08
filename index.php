@@ -63,7 +63,7 @@ include_once 'affichage/_debut.inc.php';
         </div>
         <div style="display:flex;gap:10px;align-items:center;margin-top:14px">
           <button class="btn btn--primary" type="submit">Obtenir un devis</button>
-          <span class="muted">ou appelez-nous au <a href="tel:+33000000000"><strong>+33 0 00 00 00 00</strong></a></span>
+          <span class="muted">ou appelez-nous au <a href="tel:+33661553983"><strong>+33 6 61 55 39 83</strong></a></span>
         </div>
       </form>
     </div>
@@ -165,7 +165,7 @@ include_once 'affichage/_debut.inc.php';
       <div class="features">
         <div class="card">
           <h3>Téléphone</h3>
-          <p><a href="tel:+33000000000">+33 0 00 00 00 00</a></p>
+          <p><a href="tel:+33000000000">+33 6 61 55 39 83</a></p>
           <p class="muted">7j/7 • 6h–23h</p>
         </div>
         <div class="card">

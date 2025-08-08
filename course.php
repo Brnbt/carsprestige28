@@ -78,6 +78,13 @@ if (!empty($_GET['err'])) $message = '<p style="color:red;">'   . htmlspecialcha
 
     <label>Prix (€) :</label>
     <input type="number" step="0.01" name="prix" required><br><br>
+        
+    <label>Mode de paiement</label>
+    <select name="mode_paiement" required>
+      <option value="carte">Carte</option>
+      <option value="espèces">Espèces</option>
+      <option value="virement">Virement</option>
+    </select>
 
     <label>Statut :</label>
     <select name="statut" required>

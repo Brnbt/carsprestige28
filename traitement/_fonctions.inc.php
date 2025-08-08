@@ -211,13 +211,13 @@ function insertClient($nom, $prenom, $telephone, $email)
 }
 
 
-function insertCourse($date_course, $point_depart, $point_arrivee, $distance_km, $prix, $statut, $id_client, $id_chauffeur)
+function insertCourse($date_course, $point_depart, $point_arrivee, $distance_km, $prix, $mode_paiement, $statut, $id_client, $id_chauffeur)
 {
     $db = gestionnaireDeConnexion();
 
     $sql = "
-        INSERT INTO course (date_course, point_depart, point_arrivee, distance_km, prix, statut, id_client, id_chauffeur)
-        VALUES (:date_course, :point_depart, :point_arrivee, :distance_km, :prix, :statut, :id_client, :id_chauffeur)
+        INSERT INTO course (date_course, point_depart, point_arrivee, distance_km, prix, mode_paiement, statut, id_client, id_chauffeur)
+        VALUES (:date_course, :point_depart, :point_arrivee, :distance_km, :prix, :mode_paiement, :statut, :id_client, :id_chauffeur)
     ";
 
     $stmt = $db->prepare($sql);
@@ -226,6 +226,7 @@ function insertCourse($date_course, $point_depart, $point_arrivee, $distance_km,
     $stmt->bindParam(':point_arrivee', $point_arrivee);
     $stmt->bindParam(':distance_km', $distance_km);
     $stmt->bindParam(':prix', $prix);
+    $stmt->bindParam(':mode_paiement', $mode_paiement);
     $stmt->bindParam(':statut', $statut);
     $stmt->bindParam(':id_client', $id_client);
     $stmt->bindParam(':id_chauffeur', $id_chauffeur);
@@ -236,3 +237,118 @@ function insertCourse($date_course, $point_depart, $point_arrivee, $distance_km,
     return false;
 }
 
+function getCoursesByClient(int $clientId, int $limit = 1000): array {
+    if ($clientId <= 0) return [];
+    $limit = max(1, min(2000, $limit));
+    $db = gestionnaireDeConnexion();
+    $sql = "
+        SELECT
+            co.id_course,
+            co.date_course,
+            co.point_depart,
+            co.point_arrivee,
+            co.distance_km,
+            co.prix,
+            co.mode_paiement,
+            co.statut,
+            ch.nom     AS chauffeur_nom,
+            ch.prenom  AS chauffeur_prenom
+        FROM course co
+        LEFT JOIN chauffeur ch ON ch.id_chauffeur = co.id_chauffeur
+        WHERE co.id_client = :id_client
+        ORDER BY co.date_course DESC
+        LIMIT :lim
+    ";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue(':id_client', $clientId, PDO::PARAM_INT);
+    $stmt->bindValue(':lim', $limit, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getCourseWithClientById(int $id): array {
+    if ($id <= 0) return [];
+    $db = gestionnaireDeConnexion();
+
+    $sql = "
+        SELECT
+            co.id_course,
+            co.date_course,
+            co.point_depart,
+            co.point_arrivee,
+            co.distance_km,
+            co.prix, -- TTC
+            co.statut,
+
+            cl.id_client,
+            cl.nom AS client_nom,
+            cl.prenom AS client_prenom,
+            cl.telephone AS client_telephone,
+            cl.email AS client_email,
+
+            ch.nom AS chauffeur_nom,
+            ch.prenom AS chauffeur_prenom,
+
+            fa.id_facture,
+            fa.date_facture,
+            fa.montant AS facture_montant,
+            fa.mode_paiement,
+            fa.statut AS facture_statut
+        FROM course co
+        JOIN client cl    ON cl.id_client = co.id_client
+        LEFT JOIN chauffeur ch ON ch.id_chauffeur = co.id_chauffeur
+        LEFT JOIN facture fa   ON fa.id_course = co.id_course
+        WHERE co.id_course = :id
+        LIMIT 1
+    ";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+}
+
+function getFactureByCourseId(int $courseId): array {
+    if ($courseId <= 0) return [];
+    $db = gestionnaireDeConnexion();
+    $sql = "SELECT * FROM facture WHERE id_course = :id LIMIT 1";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue(':id', $courseId, PDO::PARAM_INT);
+    $stmt->execute();
+    return $stmt->fetch(PDO::FETCH_ASSOC) ?: [];
+}
+
+/**
+ * Crée une facture si absente pour cette course.
+ * - date_facture = CURDATE()
+ * - montant = course.prix
+ * - mode_paiement = 'carte'
+ * - statut = 'impayée'
+ * Retourne la facture (existante ou nouvellement créée).
+ */
+function createFactureIfMissing(int $courseId): array {
+    $db = gestionnaireDeConnexion();
+
+    // Existe déjà ?
+    $fa = getFactureByCourseId($courseId);
+    if (!empty($fa)) return $fa;
+
+    // Récupère le prix TTC de la course
+    $stmt = $db->prepare("SELECT prix FROM course WHERE id_course = :id");
+    $stmt->bindValue(':id', $courseId, PDO::PARAM_INT);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$row) return [];
+
+    $montant = (float)$row['prix'];
+
+    // Crée la facture
+    $ins = $db->prepare("
+        INSERT INTO facture (id_course, date_facture, montant, mode_paiement, statut)
+        VALUES (:id_course, CURDATE(), :montant, 'carte', 'impayée')
+    ");
+    $ins->bindValue(':id_course', $courseId, PDO::PARAM_INT);
+    $ins->bindValue(':montant', $montant);
+    $ins->execute();
+
+    return getFactureByCourseId($courseId);
+}
