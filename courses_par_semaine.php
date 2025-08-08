@@ -23,7 +23,7 @@ if (!function_exists('getCoursesGroupedByWeek')) {
     die("La fonction getCoursesGroupedByWeek() est manquante dans _fonctions.inc.php");
 }
 
-$rows = getCoursesGroupedByWeek($from, $to, $clientId ?: null, $limit);
+$rows = getCoursesGroupedByWeek($from, $to, $clientId ?: null, 52);
 
 // totaux globaux (sur la période)
 $totCourses = array_sum(array_column($rows, 'nb_courses'));

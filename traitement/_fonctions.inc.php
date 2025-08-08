@@ -352,3 +352,57 @@ function createFactureIfMissing(int $courseId): array {
 
     return getFactureByCourseId($courseId);
 }
+
+function getCoursesGroupedByWeek(string $from, string $to, ?int $clientId = null, int $limit = 52): array
+{
+    $db = gestionnaireDeConnexion();
+    $limit = max(1, (int)$limit);
+    $toEnd = $to . ' 23:59:59';
+
+    $where = "co.date_course BETWEEN :from AND :to";
+    $params = [
+        ':from' => $from,
+        ':to'   => $toEnd,
+    ];
+
+    if (!empty($clientId)) {
+        $where .= " AND co.id_client = :clientId";
+        $params[':clientId'] = $clientId;
+    }
+
+    // YEARWEEK(date, 1) => semaine ISO (lundi)
+    // On calcule le lundi et le dimanche de la semaine via STR_TO_DATE avec %x (année ISO) et %v (semaine ISO).
+    $sql = "
+        SELECT
+            CONCAT(
+                SUBSTRING(YEARWEEK(co.date_course, 1), 1, 4),
+                'W',
+                LPAD(SUBSTRING(YEARWEEK(co.date_course, 1), 5, 2), 2, '0')
+            ) AS yw,
+            DATE_FORMAT(
+                STR_TO_DATE(CONCAT(YEARWEEK(co.date_course, 1), ' Monday'), '%x%v %W'),
+                '%Y-%m-%d'
+            ) AS week_start,
+            DATE_FORMAT(
+                DATE_ADD(STR_TO_DATE(CONCAT(YEARWEEK(co.date_course, 1), ' Monday'), '%x%v %W'), INTERVAL 6 DAY),
+                '%Y-%m-%d'
+            ) AS week_end,
+            COUNT(*) AS nb_courses,
+            SUM(COALESCE(co.distance_km, 0)) AS total_km,
+            SUM(COALESCE(co.prix, 0))        AS total_prix
+        FROM course co
+        WHERE $where
+        GROUP BY YEARWEEK(co.date_course, 1)
+        ORDER BY YEARWEEK(co.date_course, 1) DESC
+        LIMIT :limit
+    ";
+
+    $stmt = $db->prepare($sql);
+    foreach ($params as $k => $v) {
+        $stmt->bindValue($k, $v);
+    }
+    $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+    $stmt->execute();
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+}

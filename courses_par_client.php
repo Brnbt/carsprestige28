@@ -23,30 +23,6 @@ if ($clientId > 0) {
 }
 ?>
 
-<style>
-  :root { --bg:#0f172a; --panel:#111827; --muted:#9ca3af; --text:#e5e7eb; --accent:#22c55e; }
-  html,body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--text)}
-  .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
-  h1{font-size:clamp(1.2rem,2.5vw,1.6rem);margin:0 0 12px 0}
-  .card{background:linear-gradient(180deg,rgba(255,255,255,.05),transparent 60%) ,var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:14px;box-shadow:0 10px 24px rgba(0,0,0,.25)}
-  .head{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:16px}
-  .filters{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-  .select, .inp{appearance:none;background:#0b1220;border:1px solid rgba(255,255,255,.1);color:var(--text);border-radius:10px;padding:10px 12px}
-  .btn{background:var(--accent);color:#052e16;border:none;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer}
-  .btn:disabled{opacity:.6;cursor:not-allowed}
-  .table-wrap{overflow:auto}
-  table{border-collapse:collapse;width:100%}
-  th,td{padding:12px 10px;border-bottom:1px solid rgba(255,255,255,.08);white-space:nowrap}
-  th{text-align:left;font-size:.9rem;color:var(--muted);position:sticky;top:0;background:var(--panel)}
-  tr:hover{background:rgba(255,255,255,.04)}
-  .muted{color:var(--muted)}
-  .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:.8rem;border:1px solid rgba(255,255,255,.15)}
-  .foot{padding:12px 16px;color:var(--muted);font-size:.9rem;display:flex;justify-content:space-between;gap:8px;align-items:center}
-  .nores{padding:24px;text-align:center;color:var(--muted)}
-  .actions{display:flex;gap:8px;align-items:center}
-  .btn.link{background:transparent;border:1px solid rgba(255,255,255,.2);color:var(--text)}
-  .checkbox{width:18px;height:18px;cursor:pointer}
-</style>
 
 <div class="wrap">
   <h1>Factures des clients</h1>
@@ -90,8 +66,6 @@ if ($clientId > 0) {
             <th>Km</th>
             <th>Prix (€)</th>
             <th>Paie</th>
-            <th>Statut</th>
-            <th>Chauffeur</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -105,8 +79,6 @@ if ($clientId > 0) {
                     $r['point_depart'] ?? '',
                     $r['point_arrivee'] ?? '',
                     $r['mode_paiement'] ?? '',
-                    $r['statut'] ?? '',
-                    ($r['chauffeur_nom'] ?? '') . ' ' . ($r['chauffeur_prenom'] ?? ''),
                 ]));
                 if (mb_strpos($hay, mb_strtolower($q)) === false) continue;
             }
@@ -115,7 +87,6 @@ if ($clientId > 0) {
             $dateStr   = isset($r['date_course']) ? (string)$r['date_course'] : '';
             $ts        = $dateStr ? strtotime(str_replace(' ', 'T', $dateStr)) : false;
             $dateAff   = $ts ? date('d/m/Y H:i', $ts) : htmlspecialchars($dateStr, ENT_QUOTES, 'UTF-8');
-            $chauffeur = trim(($r['chauffeur_prenom'] ?? '') . ' ' . ($r['chauffeur_nom'] ?? ''));
         ?>
           <tr>
             <td><input type="checkbox" class="checkbox rowcheck" value="<?= htmlspecialchars($idCourse, ENT_QUOTES, 'UTF-8') ?>"></td>
@@ -126,8 +97,6 @@ if ($clientId > 0) {
             <td><?= ($r['distance_km'] !== null && $r['distance_km'] !== '') ? htmlspecialchars(number_format((float)$r['distance_km'], 2, ',', ' '), ENT_QUOTES, 'UTF-8') : '' ?></td>
             <td><?= ($r['prix'] !== null && $r['prix'] !== '') ? htmlspecialchars(number_format((float)$r['prix'], 2, ',', ' '), ENT_QUOTES, 'UTF-8') : '' ?></td>
             <td><span class="badge"><?= htmlspecialchars((string)($r['mode_paiement'] ?? ''), ENT_QUOTES, 'UTF-8') ?></span></td>
-            <td><span class="badge"><?= htmlspecialchars((string)($r['statut'] ?? ''), ENT_QUOTES, 'UTF-8') ?></span></td>
-            <td><?= htmlspecialchars($chauffeur, ENT_QUOTES, 'UTF-8') ?></td>
             <td class="actions">
               <a class="btn link" href="facture.php?id=<?= urlencode($idCourse) ?>" target="_blank" rel="noopener">Facture</a>
             </td>
