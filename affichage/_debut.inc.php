@@ -44,11 +44,10 @@ include_once 'traitement/_fonctions.inc.php';
   <img src="img/logoblanc.png" alt="Accueil — Logo Chauffeur VTC">
 </a>    </div>
     <nav class="nav-links">
-        <a href="#accueil">Accueil</a>
-        <a href="courses_par_client.php">Voir les factures</a>
+        <a href="index.php">Accueil</a>
         <a href="course.php">Ajouter une course</a>
+        <a href="courses_par_client.php">Voir les factures</a>
         <a href="courses_par_semaine.php">Chiffre d'affaire par semaine</a>
-        <a href="#contact">Contact</a>
         <a href="#reserver" class="btn-reserver">Réserver</a>
     </nav>
 </header>

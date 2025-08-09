@@ -23,9 +23,11 @@ if ($clientId > 0) {
 }
 ?>
 
+  <div class="page-course"><h2 class="page-title">Factures des clients</h2>
+
 
 <div class="wrap">
-  <h1>Factures des clients</h1>
+
 
   <div class="card">
     <form class="head" method="get" action="">
@@ -160,3 +162,5 @@ if ($clientId > 0) {
   updateBtn();
 })();
 </script>
+
+<?php include_once 'affichage/_fin.inc.php'; ?>

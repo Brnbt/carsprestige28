@@ -30,32 +30,8 @@ $totCourses = array_sum(array_column($rows, 'nb_courses'));
 $totKm      = array_sum(array_map(fn($r)=>(float)$r['total_km'], $rows));
 $totPrix    = array_sum(array_map(fn($r)=>(float)$r['total_prix'], $rows));
 ?>
-<style>
-  :root { --bg:#0f172a; --panel:#111827; --muted:#9ca3af; --text:#e5e7eb; --accent:#22c55e; }
-  html,body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;background:var(--bg);color:var(--text)}
-  .wrap{max-width:1100px;margin:24px auto;padding:0 16px}
-  h1{font-size:clamp(1.2rem,2.5vw,1.6rem);margin:0 0 12px 0}
-  .card{background:linear-gradient(180deg,rgba(255,255,255,.05),transparent 60%) ,var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:14px;box-shadow:0 10px 24px rgba(0,0,0,.25)}
-  .head{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:16px}
-  .filters{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-  .select, .inp{appearance:none;background:#0b1220;border:1px solid rgba(255,255,255,.1);color:var(--text);border-radius:10px;padding:10px 12px}
-  .btn{background:var(--accent);color:#052e16;border:none;border-radius:10px;padding:10px 14px;font-weight:600;cursor:pointer}
-  .table-wrap{overflow:auto}
-  table{border-collapse:collapse;width:100%}
-  th,td{padding:12px 10px;border-bottom:1px solid rgba(255,255,255,.08);white-space:nowrap}
-  th{text-align:left;font-size:.9rem;color:var(--muted);position:sticky;top:0;background:var(--panel)}
-  tr:hover{background:rgba(255,255,255,.04)}
-  .muted{color:var(--muted)}
-  .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:.8rem;border:1px solid rgba(255,255,255,.15)}
-  .foot{padding:12px 16px;color:var(--muted);font-size:.9rem;display:flex;justify-content:space-between;gap:8px;align-items:center}
-  .nores{padding:24px;text-align:center;color:var(--muted)}
-  .kpis{display:flex;gap:12px;flex-wrap:wrap}
-  .kpi{background:#0b1220;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 12px}
-  .kpi .v{font-weight:700}
-</style>
-
 <div class="wrap">
-  <h1>Courses par semaine</h1>
+  <div class="page-course"><h2 class="page-title">Courses par semaine</h2>
 
   <div class="card">
     <form class="head" method="get" action="">
@@ -137,3 +113,6 @@ $totPrix    = array_sum(array_map(fn($r)=>(float)$r['total_prix'], $rows));
     </div>
   </div>
 </div>
+
+
+<?php include_once 'affichage/_fin.inc.php'; ?>
