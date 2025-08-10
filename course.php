@@ -10,7 +10,7 @@ $message = '';
 if (!empty($_GET['msg'])) $message = '<p style="color:green;">' . htmlspecialchars($_GET['msg']) . '</p>';
 if (!empty($_GET['err'])) $message = '<p style="color:red;">'   . htmlspecialchars($_GET['err']) . '</p>';
 ?>
-<div class="page-course"><h2 class="page-title">Ajouter une course</h2>
+<div class="page-course"><h2 class="zzz">Ajouter une course</h2>
 <?= $message ?>
 
 <!-- FORMULAIRE D’AJOUT DE CLIENT (caché par défaut) -->
@@ -37,7 +37,7 @@ if (!empty($_GET['err'])) $message = '<p style="color:red;">'   . htmlspecialcha
 </div>
 
 <!-- FORMULAIRE D’AJOUT DE COURSE -->
-<form id="form-course" method="post" action="traitement/_ajouterCourse.php">
+<form id="form-course"  method="post"  action="traitement/_ajouterCourse.php">
   <fieldset>
     <legend>Client</legend>
 

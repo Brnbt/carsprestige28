@@ -1,11 +1,4 @@
 <?php
-/* =============================================================
- * FICHIER: depense.php
- * Page d'ajout de dépense, inspirée de course.php
- * Prérequis: table `depense` (voir script CREATE TABLE fourni plus haut)
- * ============================================================= */
-?>
-<?php
 require_once 'affichage/_debut.inc.php';
 
 $chauffeurs = getAllChauffeur();
@@ -16,7 +9,7 @@ $message = '';
 if (!empty($_GET['msg'])) $message = '<p style="color:green;">' . htmlspecialchars($_GET['msg']) . '</p>';
 if (!empty($_GET['err'])) $message = '<p style="color:red;">'   . htmlspecialchars($_GET['err']) . '</p>';
 ?>
-<div class="page-depense"><h2 class="page-title">Ajouter une dépense</h2>
+<div class="page-depense" style="width:60% ; margin : auto; padding-top : 40px; padding-bottom : 40px;"><h2 class="page-title">Ajouter une dépense</h2>
 <?= $message ?>
 
 <form id="form-depense" method="post" action="traitement/_ajouterDepense.php">
@@ -85,30 +78,9 @@ if (!empty($_GET['err'])) $message = '<p style="color:red;">'   . htmlspecialcha
 
   </fieldset>
 
-  <br>
-  <!-- <fieldset>
-    <legend>Notes</legend>
-    <label>Description :</label>
-    <textarea name="description" rows="3" style="width:100%;max-width:720px;" placeholder="Ex: plein avant Cergy → Argenteuil, reçu n°123..."></textarea>
-
-    <div style="margin-top:8px;">
-      <label>
-        <input type="checkbox" name="refacturable_client" value="1"> Refacturable au client
-      </label>
-    </div>
-  </fieldset> -->
-
-  <br>
   <button type="submit" class="btn btn--primary">Ajouter la dépense</button>
 </form>
 
 </div>
 <?php require_once 'affichage/_fin.inc.php'; ?>
 
-
-<?php
-/* =============================================================
- * FICHIER: traitement/_ajouterDepense.php
- * Traite l'ajout d'une dépense via POST
- * ============================================================= */
-?>

@@ -1,10 +1,6 @@
 
 <?php include_once 'affichage/_debut.inc.php'; ?>
 
-<?php include_once 'affichage/hero.affichage.php'; ?>
-
-<?php include_once 'affichage/services.affichage.php'; ?>
-
 <?php include_once 'affichage/vehicule.affichage.php'; ?>
 
 <?php include_once 'affichage/contact.affichage.php'; ?>
