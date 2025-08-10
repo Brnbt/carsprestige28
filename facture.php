@@ -30,7 +30,7 @@ $client_fullname = trim($clientNom.' '.$clientPre);
 // Dates
 $ts = $date_raw ? strtotime(str_replace(' ', 'T', $date_raw)) : false;
 $date_facture = date('d/m/Y');
-$date_prise   = $ts ? date('d/m/Y H:i', $ts) : ($date_raw ?: '');
+$date_prise   = $ts ? date('d/m/Y', $ts) : ($date_raw ?: '');
 
 // TVA (fixe 20 % pour l’exemple)
 $tauxTVA = 10;
@@ -54,7 +54,12 @@ $ent_siret  = "N° SIRET 914672423";
 function t($s){ return iconv('UTF-8','windows-1252//TRANSLIT',$s); }
 function eur($n){ return number_format((float)$n, 2, ',', ' ') . ' €'; }
 
-$numero_facture = 'FAC-'.str_pad((string)$id_course, 6, '0', STR_PAD_LEFT);
+$anneeFacture   = $ts ? date('Y', $ts) : date('Y');
+$annee  = $ts ? date('Y', $ts) : date('Y');
+$mois   = $ts ? date('m', $ts) : date('m');
+$jour   = $ts ? date('d', $ts) : date('d');
+$numero_facture = 'FAC'.$annee.$mois.$jour.sprintf('%06d', (int)$id_course);
+
 
 // ---------- PDF ----------
 class PDF extends FPDF {
@@ -93,7 +98,7 @@ $pdf->SetFont('Arial','',11);
 $pdf->SetXY(130, $pdf->GetY());
 $pdf->Cell(70,7,t($numero_facture),0,1,'R');
 $pdf->SetXY(130, $pdf->GetY());
-$pdf->Cell(70,7,t('Le '.$date_facture),0,1,'R');
+$pdf->Cell(70,7,t('Le '.$date_prise),0,1,'R');
 $pdf->Ln(6);
 
 // Style commun
@@ -167,4 +172,16 @@ $pdf->Cell(60,8,t('Paiement / Échéance'),1,0,'L',true);
 $pdf->SetFont('Arial','',10);
 $pdf->Cell(120, 8, t(ucfirst(strtolower($mode_paiement))), 1, 1, 'L');
 
+// --- Ajout bloc contact ---
+$pdf->Ln(12);
+$pdf->SetFont('Arial','I',9);
+$pdf->MultiCell(
+    0,
+    5,
+    t("Pour toute question concernant cette facture, veuillez nous contacter :\nTéléphone : ".$ent_tel."  ·  Email : desire.betabelet@gmail.com"),
+    0,
+    'C'
+);
+
 $pdf->Output('I', $numero_facture.'.pdf');
+

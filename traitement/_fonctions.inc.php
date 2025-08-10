@@ -406,3 +406,87 @@ function getCoursesGroupedByWeek(string $from, string $to, ?int $clientId = null
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 }
+
+function ajouterDepense(array $data, ?string &$err = null): bool
+{
+    $err = null;
+
+    // Normalisation des entrées
+    $id_chauffeur = isset($data['id_chauffeur']) ? (int)$data['id_chauffeur'] : 0;
+    $id_course    = (isset($data['id_course']) && $data['id_course'] !== '') ? (int)$data['id_course'] : null;
+    $id_vehicule  = (isset($data['id_vehicule']) && $data['id_vehicule'] !== '') ? (int)$data['id_vehicule'] : null;
+    $date_raw     = trim($data['date_depense'] ?? '');
+    $type         = $data['type_depense'] ?? '';
+    $montant      = isset($data['montant']) ? (float)$data['montant'] : null;
+    $description  = trim($data['description'] ?? '');
+    $refacturable = isset($data['refacturable_client']) ? 1 : 0;
+    $mode_remb    = $data['mode_remboursement'] ?? 'non_rembourse';
+
+    $allowedTypes = ['carburant','péage','parking','location_vehicule','entretien','autre'];
+    $allowedRemb  = ['cash','virement','non_rembourse'];
+
+    // Validation minimale
+    if ($id_chauffeur <= 0) { $err = 'Chauffeur obligatoire'; return false; }
+    if ($date_raw === '') { $err = 'Date de dépense manquante'; return false; }
+    if (!in_array($type, $allowedTypes, true)) { $err = 'Type de dépense invalide'; return false; }
+    if (!is_numeric($montant) || $montant < 0) { $err = 'Montant invalide'; return false; }
+    if (!in_array($mode_remb, $allowedRemb, true)) { $err = 'Mode de remboursement invalide'; return false; }
+
+    // Conversion HTML datetime-local -> DATETIME SQL
+    $dt = DateTime::createFromFormat('Y-m-d\TH:i', $date_raw);
+    if (!$dt) { $err = 'Format de date invalide'; return false; }
+    $date_sql = $dt->format('Y-m-d H:i:s');
+
+    try {
+        $db = gestionnaireDeConnexion();
+        $sql = "
+            INSERT INTO depense (
+              id_chauffeur, id_course, id_vehicule,
+              date_depense, type_depense, montant, description,
+              refacturable_client, mode_remboursement
+            ) VALUES (
+              :id_chauffeur, :id_course, :id_vehicule,
+              :date_depense, :type_depense, :montant, :description,
+              :refacturable_client, :mode_remboursement
+            )";
+        $st = $db->prepare($sql);
+        $st->bindValue(':id_chauffeur', $id_chauffeur, PDO::PARAM_INT);
+        $st->bindValue(':id_course', $id_course, $id_course === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $st->bindValue(':id_vehicule', $id_vehicule, $id_vehicule === null ? PDO::PARAM_NULL : PDO::PARAM_INT);
+        $st->bindValue(':date_depense', $date_sql);
+        $st->bindValue(':type_depense', $type);
+        $st->bindValue(':montant', $montant);
+        $st->bindValue(':description', $description === '' ? null : $description, $description === '' ? PDO::PARAM_NULL : PDO::PARAM_STR);
+        $st->bindValue(':refacturable_client', $refacturable, PDO::PARAM_INT);
+        $st->bindValue(':mode_remboursement', $mode_remb);
+        return (bool)$st->execute();
+    } catch (Throwable $e) {
+        $err = 'SQL: ' . $e->getMessage();
+        return false;
+    }
+}
+
+/**
+ * Récupère des dépenses (filtrables) pour affichage.
+ */
+function getDepenses(?int $id_chauffeur = null, ?string $from = null, ?string $to = null): array
+{
+    $db = gestionnaireDeConnexion();
+    $where = [];
+    $params = [];
+    if ($id_chauffeur) { $where[] = 'd.id_chauffeur = :idc'; $params[':idc'] = $id_chauffeur; }
+    if ($from) { $where[] = 'd.date_depense >= :from'; $params[':from'] = $from; }
+    if ($to)   { $where[] = 'd.date_depense <= :to';   $params[':to']   = $to; }
+
+    $sql = 'SELECT d.*, ch.nom, ch.prenom, v.immatriculation
+            FROM depense d
+            LEFT JOIN chauffeur ch ON ch.id_chauffeur = d.id_chauffeur
+            LEFT JOIN vehicule v  ON v.id_vehicule = d.id_vehicule';
+    if ($where) { $sql .= ' WHERE ' . implode(' AND ', $where); }
+    $sql .= ' ORDER BY d.date_depense DESC LIMIT 200';
+
+    $st = $db->prepare($sql);
+    foreach ($params as $k => $v) { $st->bindValue($k, $v); }
+    $st->execute();
+    return $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
+}
