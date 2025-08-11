@@ -251,7 +251,7 @@ footer { border-top: 1px solid var(--border-strong); padding: 36px 0; color: var
 /* ================================
    Page courses_par_client
 ================================ */
-.wrap { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+.wrap { width: 90%; margin: 24px auto; padding: 0 16px; }
 
 h1 { font-size: clamp(1.2rem, 2.5vw, 1.6rem); margin: 0 0 12px 0; }
 

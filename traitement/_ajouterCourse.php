@@ -78,5 +78,32 @@ if ($id_course === false) {
     exit;
 }
 
-header('Location: ' . ($_SERVER['HTTP_REFERER'] ?? 'ajouter_course.php') . '?ok=1');
+// Helper pour ajouter proprement des query params au referer
+$referer = $_SERVER['HTTP_REFERER'] ?? '/carsprestige28/ajouter_course.php';
+function appendQuery(string $url, array $params): string {
+    $parts = parse_url($url);
+    $query = [];
+    if (!empty($parts['query'])) {
+        parse_str($parts['query'], $query);
+    }
+    $query = array_merge($query, $params);
+
+    $scheme   = $parts['scheme'] ?? '';
+    $host     = $parts['host'] ?? '';
+    $port     = isset($parts['port']) ? ':' . $parts['port'] : '';
+    $path     = $parts['path'] ?? '';
+    $fragment = isset($parts['fragment']) ? '#' . $parts['fragment'] : '';
+
+    $qs = http_build_query($query);
+    $base = ($scheme ? "$scheme://" : '') . ($host ? "$host$port" : '') . $path;
+    return $base . ($qs ? ('?' . $qs) : '') . $fragment;
+}
+
+// Redirection avec message + id_facture (= id_course)
+$redirectUrl = appendQuery($referer, [
+    'msg'        => 'Course ajoutée avec succès.',
+    'id_facture' => (string)$id_course
+]);
+
+header('Location: ' . $redirectUrl);
 exit;

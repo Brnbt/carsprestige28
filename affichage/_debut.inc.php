@@ -47,9 +47,11 @@ include_once 'traitement/_fonctions.inc.php';
         <a href="index.php">Accueil</a>
         <a href="course.php">Course</a>
         <a href="depense.php">Depense</a>
-        <a href="courses_par_client.php">Facture</a>
+        <a href="facture.php">Facture</a>
         <a href="courses_par_semaine.php">Chiffre d'affaire par semaine</a>
         <!-- <a href="#reserver" class="btn-reserver">Réserver</a> -->
     </nav>
 </header>
+
+
 
