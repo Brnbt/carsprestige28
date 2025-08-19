@@ -139,7 +139,6 @@ nav a:hover { color: #fff; }
 .btn--ghost:hover { --bd: var(--border-strong); opacity: .95; }
 
 /* Alias existant pour compat */
-.btn-reserver { @apply-unavailable: keep; /* doc-only */ }
 .btn-reserver { background-color: var(--blue); padding: 10px 20px; border-radius: 30px; font-weight: bold; color: #fff; transition: transform var(--duration-fast); }
 .btn-reserver:hover { background-color: var(--blue-600); transform: scale(1.05); }
 

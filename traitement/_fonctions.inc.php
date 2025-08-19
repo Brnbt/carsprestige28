@@ -8,7 +8,7 @@ function gestionnaireDeConnexion()
 {
     $user = 'carsprestige28';
     $pass = 'C9b51vf89*Dmy(bl';
-    $dsn = 'mysql:host=192.168.1.175:9510;dbname=carsprestige29';
+    $dsn = 'mysql:host=192.168.1.175:9510;dbname=carsprestige28';
 
     try {
         $database = new PDO($dsn, $user, $pass);

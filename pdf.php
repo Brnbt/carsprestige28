@@ -31,6 +31,8 @@ $client_fullname = trim($clientNom.' '.$clientPre);
 $ts = $date_raw ? strtotime(str_replace(' ', 'T', $date_raw)) : false;
 $date_facture = date('d/m/Y');
 $date_prise   = $ts ? date('d/m/Y', $ts) : ($date_raw ?: '');
+$heure_prise  = $ts ? date('H:i', $ts) : '';
+
 
 // TVA (fixe 20 % pour l’exemple)
 $tauxTVA = 10;
@@ -48,7 +50,7 @@ $ent_statut = "Entrepreneur individuel de Transport";
 $ent_addr   = "48B rue Philibert Delorme 28260 ANET";
 $ent_tel    = "06 61 55 39 83";
 $ent_tva    = "";
-$ent_siret  = "N° SIRET 914672423";
+$ent_siret  = "N° SIRET 928294875";
 
 // Helpers
 function t($s){ return iconv('UTF-8','windows-1252//TRANSLIT',$s); }
@@ -64,7 +66,7 @@ $numero_facture = 'FAC'.$annee.$mois.$jour.sprintf('%06d', (int)$id_course);
 // ---------- PDF ----------
 class PDF extends FPDF {
   function Header() {
-    $logo = __DIR__ . '/img/logopdfnoir.png';
+    $logo = __DIR__ . '/img/logopdf.png';  
     if (is_file($logo)) $this->Image($logo, 15, 10, 40);
     $this->Ln(25);
   }
@@ -138,7 +140,7 @@ $pdf->Ln(4);
 sectionTitle($pdf, 'Désignation');
 tableHeader($pdf, $colLabelW, $colValueW);
 $fill=false;
-kvRow($pdf,'Date de prise en charge :', $date_prise ?: '—', $colLabelW,$colValueW,$rowH,$fill); $fill=!$fill;
+kvRow($pdf,'Date et heure de prise en charge :', $date_prise.($heure_prise ? ' à '.$heure_prise : ''), $colLabelW,$colValueW,$rowH,$fill);
 kvRow($pdf,'Lieu de prise en charge :', $depart ?: '—',     $colLabelW,$colValueW,$rowH,$fill); $fill=!$fill;
 kvRow($pdf,'Destination :',             $arrivee ?: '—',    $colLabelW,$colValueW,$rowH,$fill); $fill=!$fill;
 kvRow($pdf,'Kilomètres parcourus :',    ($kilometres>0?number_format($kilometres,1,',',' '):'0').' km', $colLabelW,$colValueW,$rowH,$fill); $fill=!$fill;
@@ -178,7 +180,7 @@ $pdf->SetFont('Arial','I',9);
 $pdf->MultiCell(
     0,
     5,
-    t("Pour toute question concernant cette facture, veuillez nous contacter :\nTéléphone : ".$ent_tel."  ·  Email : desire.betabelet@gmail.com"),
+    t("\nTéléphone : ".$ent_tel."  ·  Email : desire.betabelet@gmail.com"),
     0,
     'C'
 );

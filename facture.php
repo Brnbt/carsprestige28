@@ -1,5 +1,4 @@
 <?php
-
 include_once 'affichage/_debut.inc.php';
 
 header('X-Content-Type-Options: nosniff');
@@ -18,12 +17,9 @@ if ($clientId > 0) {
 }
 ?>
 
-  <div class="page-course"><h2 class="page-title">Factures des clients</h2>
-
+<div class="page-course"><h2 class="page-title">Factures des clients</h2>
 
 <div class="wrap">
-
-
   <div class="card">
     <form class="head" method="get" action="">
       <div class="filters">
@@ -37,7 +33,9 @@ if ($clientId > 0) {
             $tel   = $cl['telephone'] ?? '';
             $label = trim($nom.' '.$pre.($tel?" · ".$tel:''));
           ?>
-            <option value="<?= $id ?>" <?= $id === $clientId ? 'selected' : '' ?>><?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?></option>
+            <option value="<?= $id ?>" <?= $id === $clientId ? 'selected' : '' ?>>
+              <?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?>
+            </option>
           <?php endforeach; ?>
         </select>
 
@@ -55,6 +53,7 @@ if ($clientId > 0) {
       <table id="grid">
         <thead>
           <tr>
+            <th><input type="checkbox" id="checkAll" /></th>
             <th>ID</th>
             <th>Date</th>
             <th>Départ</th>
@@ -68,7 +67,6 @@ if ($clientId > 0) {
         <?php
         $printed = 0;
         foreach ($rows as $r) {
-            // Filtre simple côté serveur
             if ($q !== '') {
                 $hay = mb_strtolower(implode(' ', [
                     $r['point_depart'] ?? '',
@@ -84,6 +82,9 @@ if ($clientId > 0) {
             $dateAff   = $ts ? date('d/m/Y H:i', $ts) : htmlspecialchars($dateStr, ENT_QUOTES, 'UTF-8');
         ?>
           <tr>
+            <td>
+              <input type="checkbox" class="rowcheck" value="<?= htmlspecialchars($idCourse, ENT_QUOTES, 'UTF-8') ?>" />
+            </td>
             <td class="muted"><?= htmlspecialchars($idCourse, ENT_QUOTES, 'UTF-8') ?></td>
             <td><?= $dateAff ?></td>
             <td><?= htmlspecialchars((string)($r['point_depart'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
@@ -91,40 +92,41 @@ if ($clientId > 0) {
             <td><?= ($r['prix'] !== null && $r['prix'] !== '') ? htmlspecialchars(number_format((float)$r['prix'], 2, ',', ' '), ENT_QUOTES, 'UTF-8') : '' ?></td>
             <td><span class="badge"><?= htmlspecialchars((string)($r['mode_paiement'] ?? ''), ENT_QUOTES, 'UTF-8') ?></span></td>
             <td class="actions">
+              <!-- Corrige le lien si besoin : ton script PDF s’appelle "facture.php" -->
               <a class="btn link" href="pdf.php?id=<?= urlencode($idCourse) ?>" target="_blank" rel="noopener">Facture</a>
             </td>
           </tr>
         <?php $printed++; }
         if ($clientId > 0 && $printed === 0): ?>
-          <tr><td colspan="11" class="nores">Aucune course ne correspond à ce filtre.</td></tr>
+          <tr><td colspan="8" class="nores">Aucune course ne correspond à ce filtre.</td></tr>
         <?php elseif ($clientId === 0): ?>
-          <tr><td colspan="11" class="nores">Sélectionnez un client pour afficher ses courses.</td></tr>
+          <tr><td colspan="8" class="nores">Sélectionnez un client pour afficher ses courses.</td></tr>
         <?php endif; ?>
         </tbody>
       </table>
     </div>
 
-    <!-- <div class="foot">
-      <span>Astuce : filtre + « Appliquer ». Utilisez les cases pour générer plusieurs factures.</span>
-      <span class="actions">
-        <button id="btnSelectedInvoices" class="btn" type="button" disabled>Factures (PDF) pour la sélection</button>
-      </span>
-    </div> -->
+    <div class="foot" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;">
+      <span class="muted">Astuce : coche plusieurs lignes d’un même client pour créer une facture groupée.</span>
+      <div class="actions">
+        <button id="btnInvoiceGroup" class="btn" type="button" disabled>Facture groupée (PDF)</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
 (function(){
-  const checkAll = document.getElementById('checkAll');
-  const rowchecks = Array.from(document.querySelectorAll('.rowcheck'));
-  const btn = document.getElementById('btnSelectedInvoices');
+  const checkAll   = document.getElementById('checkAll');
+  const rowchecks  = Array.from(document.querySelectorAll('.rowcheck'));
+  const btnGroup   = document.getElementById('btnInvoiceGroup');
 
   function updateBtn() {
-    const hasAny = rowchecks.some(c => c.checked);
-    btn.disabled = !hasAny;
-    btn.textContent = hasAny
-      ? `Factures (PDF) pour la sélection (${rowchecks.filter(c=>c.checked).length})`
-      : 'Factures (PDF) pour la sélection';
+    const selected = rowchecks.filter(c => c.checked).length;
+    btnGroup.disabled = selected === 0;
+    btnGroup.textContent = selected > 0
+      ? `Facture groupée (PDF) – ${selected} course${selected>1?'s':''}`
+      : 'Facture groupée (PDF)';
   }
 
   if (checkAll) {
@@ -134,19 +136,17 @@ if ($clientId > 0) {
     });
   }
   rowchecks.forEach(c => c.addEventListener('change', () => {
-    if (!c.checked) checkAll.checked = false;
+    if (!c.checked && checkAll) checkAll.checked = false;
     updateBtn();
   }));
 
-  if (btn) {
-    btn.addEventListener('click', () => {
+  if (btnGroup) {
+    btnGroup.addEventListener('click', () => {
       const ids = rowchecks.filter(c=>c.checked).map(c=>c.value).filter(Boolean);
       if (!ids.length) return;
-      // Ouvre chaque facture dans un nouvel onglet
-      ids.forEach((id, i) => {
-        // petit décalage pour éviter le blocage pop-up
-        setTimeout(() => window.open(`pdf.php?id=${encodeURIComponent(id)}`, '_blank', 'noopener'), i*60);
-      });
+      // ouvre un PDF UNIQUE avec toutes les courses cochées
+      const url = `pdfgroupe.php?ids=${encodeURIComponent(ids.join(','))}`;
+      window.open(url, '_blank', 'noopener');
     });
   }
 
