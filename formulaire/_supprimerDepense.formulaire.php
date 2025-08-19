@@ -20,14 +20,21 @@ $filtre_to   = $filtre_to_raw   ? ($filtre_to_raw   . ' 23:59:59') : null;
 $depenses = getDepenses($filtre_chauffeur, $filtre_from, $filtre_to);
 ?>
 
-<br><hr><br>
-
-<br>
 
 <h2>Liste des dépenses</h2>
 <?php if (empty($depenses)): ?>
   <p>Aucune dépense trouvée pour ce filtre.</p>
 <?php else: ?>
+  
+  <div class="alert warning" style="margin:1rem 0;padding:0.8rem 1rem;border:1px solid #f5c6cb;background:#f8d7da;border-radius:6px;color:#721c24;">
+  <strong>⚠️ Attention :</strong>
+  <ul style="margin:0.5rem 0 0 1.2rem;padding:0;">
+    <li>La suppression est <u>définitive</u> et retire la dépense des totaux (semaine, client, net).</li>
+    <li>Pour confirmer, vous devez saisir <strong>l’ID de la dépense</strong>.</li>
+    <li><strong>Vérifiez</strong> cet identifiant dans la liste où la dépense apparaît (ex. tableau des dépenses ou détail de la semaine) avant de valider.</li>
+  </ul>
+</div>
+
   <table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;width:100%;">
     <thead style="background:#f0f0f0;">
       <tr>

@@ -8,6 +8,19 @@ $chauffeurs = getChauffeurs();
 <fieldset >
   <legend>Supprimer une course</legend>
 
+  <h2 class="page-title">Supprimer une course</h2>
+
+<div class="alert warning" style="margin:1rem 0;padding:0.8rem 1rem;border:1px solid #f5c6cb;background:#f8d7da;border-radius:6px;color:#721c24;">
+  <strong>⚠️ Attention :</strong> 
+  Vous êtes sur le point de supprimer une course.  
+  Cette action est <u>définitive</u> et entraînera la perte des données associées (kilomètres, prix, dépenses liées).  
+  <br><br>
+  Pour confirmer, vous devez indiquer <strong>l’ID de la facture</strong> liée à cette course.  
+  Vérifiez attentivement cet identifiant dans la liste des factures avant de valider la suppression.
+</div>
+<!-- ✅ Fin note -->
+
+
   <form id="form-supprimer-course" method="post" action="traitement/_supprimerCourse.php">
     <label for="id_course_del">ID de la course (exemple : FAC20250604000002 — les derniers chiffres à écrire) </label>
     <input type="number" min="1" step="1" id="id_course_del" name="id_course" required style="width:160px;">

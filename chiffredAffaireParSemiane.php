@@ -164,8 +164,16 @@ $totPrix     = array_sum(array_map(fn($r)=>(float)$r['total_prix'], $rows));
 $totDepenses = array_sum(array_map(fn($r)=>(float)$r['depenses'], $rows));
 $totNet      = $totPrix - $totDepenses;
 ?>
+
 <div class="wrap">
   <div class="page-course"><h2 class="page-title">Courses par semaine</h2>
+
+      <div class="alert info" style="margin:1rem 0;padding:0.8rem 1rem;border:1px solid #cce5ff;background:#e9f5ff;border-radius:6px;color:#004085;">
+      <strong>ℹ️ Utilisation :</strong> 
+      Sélectionnez une période et éventuellement un client pour filtrer les résultats.  
+      Le tableau regroupe les courses et dépenses par semaine ISO (lundi → dimanche).  
+      Cliquez sur le bouton <em>« Voir »</em> d’une ligne pour afficher le détail des courses et des dépenses de la semaine.
+    </div>
 
   <div class="card">
     <form class="head" method="get" action="">
@@ -213,7 +221,6 @@ $totNet      = $totPrix - $totDepenses;
             <th>CA (€)</th>
             <th>Dépenses (€)</th>
             <th>Net (€)</th>
-            <th>Détails</th>
           </tr>
         </thead>
 

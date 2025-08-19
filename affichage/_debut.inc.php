@@ -41,14 +41,13 @@ include_once 'traitement/_fonctions.inc.php';
 <header class="vtc-header">
     <div class="logo">
 <a href="index.php" class="logo-accueil" aria-label="Aller à l’accueil" title="Accueil">
-  <img src="img/logoblanc.png" alt="Accueil — Logo Chauffeur VTC">
+  <img src="img/logocp28.png" alt="Accueil — Logo Chauffeur VTC">
 </a>    </div>
     <nav class="nav-links">
-        <a href="index.php">Accueil</a>
         <a href="course.php">Course</a>
         <a href="depense.php">Depense</a>
         <a href="facture.php">Facture</a>
-        <a href="courses_par_semaine.php">Chiffre d'affaire par semaine</a>
+        <a href="chiffredAffaireParSemiane.php">Chiffre d'affaire par semaine</a>
         <!-- <a href="#reserver" class="btn-reserver">Réserver</a> -->
     </nav>
 </header>

@@ -19,9 +19,20 @@ if ($clientId > 0) {
 
 <div class="page-course"><h2 class="page-title">Factures des clients</h2>
 
-<div class="wrap">
-  <div class="card">
-    <form class="head" method="get" action="">
+<!-- ✅ Note explicative -->
+<div class="alert info" style="margin:1rem 0;padding:0.8rem 1rem;border:1px solid #cce5ff;background:#e9f5ff;border-radius:6px;color:#004085;">
+  <strong>ℹ️ Utilisation :</strong>
+  <ul style="margin:0.5rem 0 0 1.2rem;padding:0;">
+    <li>Sélectionnez un <em>client</em> puis, si besoin, utilisez le champ <em>Filtrer</em> (départ, arrivée, mode de paiement).</li>
+    <li>Le bouton <em>Facture</em> qui se trouve tout a droite, ouvre le PDF de la course sélectionnée.</li>
+    <li>Cochez plusieurs lignes puis cliquez <em>Facture groupée (PDF)</em> pour générer un PDF unique avec toutes les courses cochées.</li>
+  </ul>
+</div>
+<!-- ✅ Fin note -->
+
+<div class="wrap"  >
+  <div class="card" >
+    <form class="head" method="get" action="" >
       <div class="filters">
         <label for="client" class="muted">Client</label>
         <select id="client" name="client_id" class="select" onchange="this.form.submit()">
@@ -52,7 +63,7 @@ if ($clientId > 0) {
     <div class="table-wrap">
       <table id="grid">
         <thead>
-          <tr>
+          <tr >
             <th><input type="checkbox" id="checkAll" /></th>
             <th>ID</th>
             <th>Date</th>
@@ -87,12 +98,11 @@ if ($clientId > 0) {
             </td>
             <td class="muted"><?= htmlspecialchars($idCourse, ENT_QUOTES, 'UTF-8') ?></td>
             <td><?= $dateAff ?></td>
-            <td><?= htmlspecialchars((string)($r['point_depart'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
+            <td style="padding:1px;"><?= htmlspecialchars((string)($r['point_depart'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
             <td><?= htmlspecialchars((string)($r['point_arrivee'] ?? ''), ENT_QUOTES, 'UTF-8') ?></td>
             <td><?= ($r['prix'] !== null && $r['prix'] !== '') ? htmlspecialchars(number_format((float)$r['prix'], 2, ',', ' '), ENT_QUOTES, 'UTF-8') : '' ?></td>
             <td><span class="badge"><?= htmlspecialchars((string)($r['mode_paiement'] ?? ''), ENT_QUOTES, 'UTF-8') ?></span></td>
             <td class="actions">
-              <!-- Corrige le lien si besoin : ton script PDF s’appelle "facture.php" -->
               <a class="btn link" href="pdf.php?id=<?= urlencode($idCourse) ?>" target="_blank" rel="noopener">Facture</a>
             </td>
           </tr>

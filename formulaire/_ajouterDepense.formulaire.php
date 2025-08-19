@@ -6,8 +6,18 @@ $courses    = function_exists('getCourses') ? getCourses() : [];
 $vehicules  = function_exists('getVehicules') ? getVehicules() : [];
 ?>
 
-<div class="page-depense" >
+<div class="page-depense" style="margin:16px 0; padding:60px; border-radius:8px;">
   <h2 class="page-title">Ajouter une dépense</h2>
+
+  <div class="alert info" style="margin:1rem 0;padding:0.8rem 1rem;border:1px solid #cce5ff;background:#e9f5ff;border-radius:6px;color:#004085;">
+  <strong>ℹ️ Utilisation :</strong>
+  <ul style="margin:0.5rem 0 0 1.2rem;padding:0;">
+    <li><strong>Montant (€)</strong> et <strong>Date</strong> sont <u>obligatoires</u>.</li>
+    <li><strong>Libellé / description</strong> recommandé pour retrouver facilement la dépense.</li>
+    <li><strong>Liaison à une course :</strong> si la dépense concerne une course précise, indiquez <em>l’ID de la course</em> (sinon laissez vide).</li>
+    <li>Les dépenses sont agrégées dans la page <em>“Courses par semaine”.</em></li>
+  </ul>
+</div>
 
   <form id="form-depense" method="post" action="traitement/_ajouterDepense.php">
     <fieldset>

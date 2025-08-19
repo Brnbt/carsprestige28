@@ -5,7 +5,18 @@ $clients    = getClients();
 $chauffeurs = getChauffeurs();
 ?>
 
+
 <div class="page-course"><h2 class="zzz">Ajouter une course</h2>
+
+<div class="alert info" style="margin:1rem 0;padding:0.8rem 1rem;border:1px solid #cce5ff;background:#e9f5ff;border-radius:6px;color:#004085;">
+  <strong>ℹ️ Utilisation :</strong> 
+  Remplissez le formulaire ci-dessous pour enregistrer une nouvelle course.  
+  <br><br>
+  <strong>Client :</strong> Le <em>nom</em>, le <em>prénom</em> et le <em>numéro de téléphone</em> doivent impérativement être renseignés.  
+  <em>L’adresse email est facultative.</em>  
+  <br><br>
+  Une fois validé, la course apparaîtra automatiquement dans la page facture.
+</div>
 
 <div id="bloc-ajout-client" style="display:none;margin:16px 0;padding:12px;border:1px solid red;border-radius:8px;">
   <h3 style="margin-top:0;">Nouveau client</h3>
