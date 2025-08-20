@@ -481,10 +481,36 @@ $totNet      = $totPrix - $totDepenses;
   </div>
 </div>
 
-<style>
-/* Optionnel: léger style pour le panneau de détails */
-tr.details > td { background: #fafafa; }
-tr.details .card { border: 1px solid #eee; }
+<style>.kpis {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;   /* centre tout le bloc */
+  margin: 1rem 0;
+}
+
+.kpi {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.5rem 1rem;
+  border: 2px solid #2b3b53ff;      /* fine bordure */
+  border-radius: 50px;         /* arrondi type “pill” */
+  background: #18202eff;            /* fond blanc pour contraste */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* léger relief */
+    color: #fff;                  /* texte en blanc */
+
+}
+
+.kpi .muted {
+  color: #fff;                  /* libellé en blanc */
+  opacity: 0.9;                 /* un peu plus clair pour contraste */
+}
+
+.kpi .v {
+  font-weight: bold;
+  color: #fff;                  /* valeur en blanc aussi */
+}
 </style>
 
 <?php include_once 'affichage/_fin.inc.php'; ?>

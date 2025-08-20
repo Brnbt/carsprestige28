@@ -133,7 +133,16 @@ if ($clientId > 0) {
 
   function updateBtn() {
     const selected = rowchecks.filter(c => c.checked).length;
-    btnGroup.disabled = selected === 0;
+    // ✅ actif seulement si AU MOINS 2
+    const enough = selected >= 2;
+    btnGroup.disabled = !enough;
+    btnGroup.setAttribute('aria-disabled', String(!enough));
+    btnGroup.title = enough
+      ? ''
+      : (selected === 1
+          ? 'Sélectionnez au moins 2 courses pour une facture groupée'
+          : 'Cochez plusieurs courses pour activer la facture groupée');
+
     btnGroup.textContent = selected > 0
       ? `Facture groupée (PDF) – ${selected} course${selected>1?'s':''}`
       : 'Facture groupée (PDF)';
@@ -153,8 +162,11 @@ if ($clientId > 0) {
   if (btnGroup) {
     btnGroup.addEventListener('click', () => {
       const ids = rowchecks.filter(c=>c.checked).map(c=>c.value).filter(Boolean);
-      if (!ids.length) return;
-      // ouvre un PDF UNIQUE avec toutes les courses cochées
+      // ✅ sécurité côté front : on sort si < 2
+      if (ids.length < 2) {
+        alert('Sélectionnez au moins 2 courses pour créer une facture groupée.');
+        return;
+      }
       const url = `pdfgroupe.php?ids=${encodeURIComponent(ids.join(','))}`;
       window.open(url, '_blank', 'noopener');
     });
@@ -163,5 +175,6 @@ if ($clientId > 0) {
   updateBtn();
 })();
 </script>
+
 
 <?php include_once 'affichage/_fin.inc.php'; ?>
