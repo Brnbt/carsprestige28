@@ -178,8 +178,18 @@ $pdf->Ln(4);
 /* ------------------------------------------------------------------
    Bloc "Désignation" : détails par course (Libellé / Valeur)
 ------------------------------------------------------------------- */
+/* ------------------------------------------------------------------
+   Bloc "Désignation" : détails par course (Libellé / Valeur)
+------------------------------------------------------------------- */
 $sec('Désignation');
+
 foreach ($courses as $i => $c) {
+    // 👉 Saut de page toutes les 2 courses déjà imprimées
+    if ($i > 0 && $i % 2 === 0) {
+        $pdf->AddPage();
+        $sec('Désignation'); // remettre le titre sur la nouvelle page
+    }
+
     // Titre de sous-bloc par course
     $pdf->SetFont('Arial','B',10);
     $titreCourse = 'Course '.($i+1).' — #'.($c['id_course'] ?? '');
@@ -206,6 +216,7 @@ foreach ($courses as $i => $c) {
 
     $pdf->Ln(4);
 }
+
 
 // ------------------------------------------------------------------
 // Totaux & TVA (en-têtes : Libellé | Valeur)
@@ -239,7 +250,7 @@ $modes = array_values(array_unique(array_map(fn($c)=>strtolower((string)$c['mode
 $modeTxt = count($modes)===1 ? ucfirst($modes[0]) : 'Modes multiples';
 $pdf->SetFont('Arial','B',10);
 $pdf->SetFillColor(245,245,245);
-$pdf->Cell(60,8,t('Paiement'),1,0,'L',true);
+$pdf->Cell(60,8,t('Paiement / Échéance'),1,0,'L',true);
 $pdf->SetFont('Arial','',10);
 $pdf->Cell(120, 8, t($modeTxt), 1, 1, 'L');
 

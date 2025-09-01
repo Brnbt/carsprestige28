@@ -314,7 +314,7 @@ $totNet      = $totPrix - $totDepenses;
                     $st = $db->prepare($sql);
                   }
                   $st->bindValue(':from', $ws.' 00:00:00');
-                  $st->bindValue(':to',   $we.' 23:59:59');
+                  $st->bindValue(':to',   $we.' 00:00:00');
                   $st->execute();
                   $courses = $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 }
@@ -360,7 +360,7 @@ $totNet      = $totPrix - $totDepenses;
                     $st = $db->prepare($sql);
                   }
                   $st->bindValue(':from', $ws.' 00:00:00');
-                  $st->bindValue(':to',   $we.' 23:59:59');
+                  $st->bindValue(':to',   $we.' 00:00:00');
                   $st->execute();
                   $depenses = $st->fetchAll(PDO::FETCH_ASSOC) ?: [];
                 }

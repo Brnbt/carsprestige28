@@ -16,6 +16,10 @@ if ($nom === '' || $prenom === '' || $telephone === '') {
     exit();
 }
 
+// ✅ Mise en forme
+$nom    = strtoupper($nom); // tout en majuscules
+$prenom = ucfirst(strtolower($prenom)); // première lettre en majuscule, le reste en minuscule
+
 $id_client = insertClient($nom, $prenom, $telephone, $email);
 
 if ($id_client) {
